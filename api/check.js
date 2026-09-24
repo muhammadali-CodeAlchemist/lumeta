@@ -62,36 +62,44 @@ function getClientIp(req) {
 // ---------- Gemini call with retry + fallback ----------
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function callGemini(model, apiKey, prompt) {
-  return fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4 },
-      }),
-    }
-  );
+async function callGemini(model, apiKey, prompt, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4 },
+        }),
+        signal: controller.signal,
+      }
+    );
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // 503 = Google's model is overloaded, 429 = quota. Both are worth retrying / falling back.
 async function callGeminiWithRetry(apiKey, prompt) {
+  // Overloaded Gemini calls can hang for a long time before failing, so each
+  // attempt gets a time limit. Worst case total is about 40 seconds.
   const plan = [
-    { model: PRIMARY_MODEL, waitBefore: 0 },
-    { model: PRIMARY_MODEL, waitBefore: 1200 },
-    { model: FALLBACK_MODEL, waitBefore: 600 },
+    { model: PRIMARY_MODEL, waitBefore: 0, timeoutMs: 20000 },
+    { model: FALLBACK_MODEL, waitBefore: 0, timeoutMs: 20000 },
   ];
 
   let lastResponse = null;
   for (const step of plan) {
     if (step.waitBefore) await sleep(step.waitBefore);
     try {
-      const response = await callGemini(step.model, apiKey, prompt);
+      const response = await callGemini(step.model, apiKey, prompt, step.timeoutMs);
       if (response.ok) return response;
 
       lastResponse = response;
@@ -187,7 +195,7 @@ If "${cleanBrand}" is a small or less-known business, that is expected and norma
     const geminiResponse = await callGeminiWithRetry(apiKey, prompt);
 
     if (!geminiResponse || !geminiResponse.ok) {
-      const busy = geminiResponse && (geminiResponse.status === 503 || geminiResponse.status === 429);
+      const busy = !geminiResponse || geminiResponse.status === 503 || geminiResponse.status === 429;
       res.status(502).json({
         error: busy
           ? "The AI service is very busy right now. Please try again in a minute."
