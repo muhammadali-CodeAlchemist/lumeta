@@ -15,9 +15,13 @@ const MAX_PER_DAY = 40;     // checks per visitor per day
 const MAX_BRAND_LENGTH = 80;
 const MAX_CATEGORY_LENGTH = 120;
 
-// Gemini models. If the main one is overloaded (503), we retry, then fall back.
-const PRIMARY_MODEL = "gemini-3.6-flash";
-const FALLBACK_MODEL = "gemini-3.1-flash-lite";
+// Gemini models, tried in order. If one is overloaded (503) or too slow, the next one is used.
+// Google's release notes point new projects to the Flash-Lite line for capacity.
+const MODEL_PLAN = [
+  { model: "gemini-3.5-flash-lite", timeoutMs: 15000 },
+  { model: "gemini-3.6-flash", timeoutMs: 20000 },
+  { model: "gemini-3.1-flash-lite", timeoutMs: 10000 },
+];
 
 // ---------- Simple in-memory rate limiter ----------
 // Note: serverless instances don't share memory and reset when they go idle,
@@ -76,7 +80,6 @@ async function callGemini(model, apiKey, prompt, timeoutMs) {
         },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4 },
         }),
         signal: controller.signal,
       }
@@ -89,15 +92,11 @@ async function callGemini(model, apiKey, prompt, timeoutMs) {
 // 503 = Google's model is overloaded, 429 = quota. Both are worth retrying / falling back.
 async function callGeminiWithRetry(apiKey, prompt) {
   // Overloaded Gemini calls can hang for a long time before failing, so each
-  // attempt gets a time limit. Worst case total is about 40 seconds.
-  const plan = [
-    { model: PRIMARY_MODEL, waitBefore: 0, timeoutMs: 20000 },
-    { model: FALLBACK_MODEL, waitBefore: 0, timeoutMs: 20000 },
-  ];
+  // attempt gets a time limit. Worst case total is about 45 seconds.
+  const plan = MODEL_PLAN;
 
   let lastResponse = null;
   for (const step of plan) {
-    if (step.waitBefore) await sleep(step.waitBefore);
     try {
       const response = await callGemini(step.model, apiKey, prompt, step.timeoutMs);
       if (response.ok) return response;
