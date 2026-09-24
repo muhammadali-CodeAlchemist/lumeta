@@ -1,79 +1,60 @@
-# Signal Backend — Gemini Brand Check API
+# Lumeta — AI Brand Visibility Tracker
 
-A minimal Vercel serverless function that queries Gemini and analyzes whether
-a brand gets mentioned for a given category — the real backend piece the
-Claude-only demo doesn't have.
+**Live demo: https://lumeta-ai.vercel.app**
 
-## What this is NOT (be clear-eyed about this)
-- Not a full multi-engine tracker yet (Gemini only, for now)
-- Not a database — every request is a fresh, uncached call
-- Not authenticated — anyone with the URL can call it (fine for a demo, not for production)
+When people ask AI assistants "what are the best options for [category]?", is your brand in the answer? Lumeta checks, and tells you what to do about it.
 
-## Setup
+Enter a brand and a category. Lumeta asks Gemini the same question a real customer would ask, then reports whether the brand was mentioned, where it ranked, which competitors appeared, and specific GEO/AEO (generative and answer engine optimization) actions to improve visibility.
 
-### 1. Get a free Gemini API key
-Go to https://aistudio.google.com/apikey, sign in with a Google account,
-create a key. The free tier has rate limits but no cost for light testing.
+## What it returns
 
-### 2. Install Vercel CLI (if you don't have it)
-```bash
-npm install -g vercel
+- **Mentioned:** Yes or No
+- **Position:** 1st, 2nd, 3rd, or not ranked
+- **Sentiment:** Positive, Neutral, or not mentioned
+- **Competitors** the AI recommended instead
+- **Actions:** concrete suggestions for improving AI visibility
+
+## How it works
+
+- `public/index.html` is a single-page frontend with a blueprint-style design.
+- `api/check.js` is a Vercel serverless function (`POST /api/check`) that sends the prompt to the Gemini API and returns structured JSON.
+- The API key lives in a server-side environment variable and is never exposed to the browser.
+
+## Built-in protections
+
+- CORS restricted to an allowlist of origins
+- Per-visitor rate limiting (in-memory, best effort)
+- Input validation and length limits
+- Upstream error details logged server-side, not sent to visitors
+
+## Run it yourself
+
+1. Clone the repo and install the Vercel CLI: `npm i -g vercel`
+2. Create a `.env.local` file containing `GEMINI_API_KEY=your_key_here` (get a key from Google AI Studio)
+3. Run `vercel dev` and open http://localhost:3000
+4. Deploy with `vercel --prod`
+
+Test the API directly:
+
+```
+curl -X POST http://localhost:3000/api/check -H "Content-Type: application/json" -d "{\"brand\": \"YourBrand\", \"category\": \"your category\"}"
 ```
 
-### 3. Set up the project locally
-```bash
-cd signal-backend
-vercel login
-```
+## Current status
 
-### 4. Add your API key as an environment variable
-```bash
-vercel env add GEMINI_API_KEY
-```
-Paste your key when prompted. Choose "Development, Preview, Production" (all three) when asked which environments.
+**Working:**
+- Live Gemini integration, deployed end to end
 
-### 5. Run it locally to test first
-```bash
-vercel dev
-```
-This starts a local server, usually at `http://localhost:3000`.
+**Planned:**
+- More AI engines (ChatGPT, Claude, Perplexity, and others). The page shows them, but only Gemini is connected today.
+- Saved check history and user accounts
+- A working waitlist signup
+- Stricter, shared rate limiting
 
-### 6. Test it with curl
-```bash
-curl -X POST http://localhost:3000/api/check \
-  -H "Content-Type: application/json" \
-  -d '{"brand": "WEB SAB Technologies", "category": "digital marketing agency for law firms"}'
-```
+## Notes
 
-You should get back JSON like:
-```json
-{
-  "engine": "gemini",
-  "mentioned": "No",
-  "position": "Not ranked",
-  "sentiment": "Not mentioned",
-  "competitors_mentioned": ["...", "...", "..."],
-  "actions": ["...", "...", "..."]
-}
-```
+Results reflect a single AI response at a single moment and can vary between runs. Treat them as a signal, not a guarantee.
 
-**If this curl command fails or returns an error, stop here and share the exact error — don't deploy yet until it works locally.**
+## Author
 
-### 7. Deploy to production
-```bash
-vercel --prod
-```
-This gives you a live URL like `https://signal-backend-yourname.vercel.app`.
-
-### 8. Test the deployed version
-```bash
-curl -X POST https://your-deployed-url.vercel.app/api/check \
-  -H "Content-Type: application/json" \
-  -d '{"brand": "WEB SAB Technologies", "category": "digital marketing agency for law firms"}'
-```
-
-## Next steps once this works
-- Wire the Signal landing page's frontend to call this endpoint instead of (or alongside) the Claude-only demo
-- Add OpenAI/Perplexity as additional engines the same way (same pattern, different API)
-- Add basic rate limiting so the free tier doesn't get exhausted by random traffic
-- Restrict CORS in `api/check.js` from `"*"` to your actual frontend domain
+Built by Muhammad Ali. Full stack developer working with React, Node.js and LLM integration.
