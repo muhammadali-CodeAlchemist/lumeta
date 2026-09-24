@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join the Lumeta waitlist</title>
+<meta name="description" content="Get early access to Lumeta, the AI brand visibility tracker. Join the waitlist.">
+<meta name="theme-color" content="#0E192B">
+<link rel="canonical" href="https://lumeta-ai.vercel.app/waitlist.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lumeta">
+<meta property="og:title" content="Join the Lumeta waitlist">
+<meta property="og:description" content="Get early access to Lumeta, the AI brand visibility tracker.">
+<meta property="og:url" content="https://lumeta-ai.vercel.app/waitlist.html">
+<meta property="og:image" content="https://lumeta-ai.vercel.app/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EDE7D9;
+    --paper-line: #D8D0BC;
+    --ink: #1B2430;
+    --ink-soft: #4A5568;
+    --rust: #C4622D;
+    --green: #3E6259;
+    --card: #F5F1E6;
+    --error: #A6361B;
+    font-size: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #171A16;
+      --paper-line: #2C2F28;
+      --ink: #EDE7D9;
+      --ink-soft: #A9A597;
+      --card: #1F231D;
+      --error: #E58A6E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171A16;
+    --paper-line: #2C2F28;
+    --ink: #EDE7D9;
+    --ink-soft: #A9A597;
+    --card: #1F231D;
+    --error: #E58A6E;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    line-height: 1.55;
+    background-image: radial-gradient(var(--paper-line) 1px, transparent 1px);
+    background-size: 22px 22px;
+    min-height: 100%;
+  }
+  h1, h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 500; line-height: 1.1; margin: 0; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  header {
+    padding: 20px 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--paper-line);
+  }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--ink); text-decoration: none; }
+  .brand-mark {
+    width: 30px; height: 30px; border: 1.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-family: 'Inter', sans-serif; font-weight: 600;
+  }
+  .back { color: var(--ink-soft); text-decoration: none; font-size: 0.92rem; }
+  .back:hover { color: var(--ink); }
+
+  .btn {
+    display: inline-block; padding: 12px 24px; border-radius: 3px;
+    font-size: 0.95rem; text-decoration: none; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--ink); font-family: 'Inter', sans-serif;
+  }
+  .btn-primary { background: var(--rust); border-color: var(--rust); color: #FBF8F0; }
+  .btn:disabled { opacity: 0.6; cursor: wait; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+
+  main { padding: 64px 0 90px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+  h1 { font-size: clamp(2.1rem, 4.6vw, 3.2rem); letter-spacing: -0.01em; max-width: 14ch; }
+  .lede { color: var(--ink-soft); font-size: 1.08rem; max-width: 42ch; margin-top: 20px; }
+  .points { list-style: none; padding: 0; margin: 30px 0 0; border-top: 1px solid var(--paper-line); }
+  .points li { padding: 14px 0; border-bottom: 1px solid var(--paper-line); font-size: 0.95rem; color: var(--ink-soft); }
+  .points strong { color: var(--ink); font-weight: 600; }
+  .honest { margin-top: 22px; font-size: 0.86rem; color: var(--ink-soft); max-width: 46ch; }
+
+  .panel {
+    background: var(--card); border: 1px solid var(--paper-line); border-radius: 4px; padding: 34px;
+  }
+  .field { margin-bottom: 20px; }
+  label { display: block; font-size: 0.86rem; color: var(--ink-soft); margin-bottom: 6px; }
+  label .opt { opacity: 0.75; }
+  input[type="text"], input[type="email"], input[type="url"] {
+    width: 100%; padding: 12px; border: 1px solid var(--paper-line); border-radius: 3px;
+    background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 0.96rem;
+  }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.86rem; color: var(--ink-soft); margin: 4px 0 22px; }
+  .consent input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+  .consent label { margin: 0; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .status { margin-top: 16px; font-size: 0.92rem; min-height: 1.4em; }
+  .status.err { color: var(--error); }
+  .fineprint { margin-top: 16px; font-size: 0.78rem; color: var(--ink-soft); }
+
+  .done { display: none; }
+  .done h2 { font-size: 1.9rem; }
+  .done p { color: var(--ink-soft); margin-top: 14px; max-width: 42ch; }
+  .done .btn { margin-top: 24px; }
+
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; gap: 36px; }
+    main { padding-top: 40px; }
+    .panel { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand-mark">L</span>
+      Lumeta
+    </a>
+    <a class="back" href="/">Back to the site</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap layout">
+    <div>
+      <h1 id="page-title">Get early access to Lumeta.</h1>
+      <p class="lede">Lumeta shows whether AI assistants mention your brand when customers ask for the best options in your category, and what to fix when they don't.</p>
+      <ul class="points">
+        <li><strong>Early access.</strong> You'll be emailed when more AI engines and saved reports are ready.</li>
+        <li><strong>Your say.</strong> Tell us which category you care about and it shapes what gets built next.</li>
+        <li><strong>No credit card.</strong> Joining the waitlist is free.</li>
+      </ul>
+      <p class="honest">Right now the live demo checks Gemini only. More engines are on the roadmap, not launched yet.</p>
+    </div>
+
+    <div class="panel">
+      <form id="waitlist-form" novalidate>
+        <div class="field">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" autocomplete="name" maxlength="80" required>
+        </div>
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" autocomplete="email" maxlength="120" required>
+        </div>
+        <div class="field">
+          <label for="company">Company or website <span class="opt">(optional)</span></label>
+          <input id="company" name="company" type="text" autocomplete="organization" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="category">What category do you want to track? <span class="opt">(optional)</span></label>
+          <input id="category" name="category" type="text" maxlength="120" placeholder="e.g. digital marketing agency for law firms">
+        </div>
+
+        <!-- spam trap: real people never see or tick this -->
+        <div class="hp" aria-hidden="true">
+          <label for="botcheck">Leave this empty</label>
+          <input id="botcheck" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="consent" style="margin-bottom:12px;">
+          <input id="walkthrough" name="walkthrough" type="checkbox">
+          <label for="walkthrough">I'd also like a short walkthrough of Lumeta (I'll be contacted by email to arrange it).</label>
+        </div>
+
+        <div class="consent">
+          <input id="consent" name="consent" type="checkbox" required>
+          <label for="consent">I agree to be emailed about Lumeta early access. I can ask to be removed at any time.</label>
+        </div>
+
+        <button id="submit-btn" class="btn btn-primary" type="submit">Join the waitlist</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <p class="fineprint">Your details are sent to the Lumeta team by email through Web3Forms. They are not sold or shared for advertising.</p>
+      </form>
+
+      <div id="done" class="done" role="status">
+        <h2>You're on the list.</h2>
+        <p>Thanks. We'll email you when early access opens. In the meantime you can run a real check on the live demo.</p>
+        <a class="btn btn-primary" href="/#demo">Try the live demo</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  // Get a free access key at https://web3forms.com (it is emailed to you).
+  // Access keys are designed to be public, so it is safe in this file.
+  var ACCESS_KEY = "873463ba-a017-4543-8f43-294bf20f7743";
+
+  var form = document.getElementById('waitlist-form');
+  var statusEl = document.getElementById('status');
+  var btn = document.getElementById('submit-btn');
+  var doneEl = document.getElementById('done');
+  var wantsWalkthroughFromLink = /[?&]walkthrough=1/.test(window.location.search);
+
+  if (wantsWalkthroughFromLink) {
+    form.walkthrough.checked = true;
+    document.getElementById('page-title').textContent = 'Book a walkthrough of Lumeta.';
+    btn.textContent = 'Request my walkthrough';
+  }
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (isError ? ' err' : '');
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    var name = form.elements['name'].value.trim();
+    var email = form.email.value.trim();
+    var company = form.company.value.trim();
+    var category = form.category.value.trim();
+
+    if (ACCESS_KEY === 'PASTE_YOUR_KEY_HERE') {
+      setStatus("The waitlist isn't connected yet. Please try again later.", true);
+      return;
+    }
+    if (!name) { setStatus('Please enter your name.', true); form.elements['name'].focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setStatus('Please enter a valid email address.', true); form.email.focus(); return; }
+    if (!form.consent.checked) { setStatus('Please tick the box so we can email you.', true); return; }
+
+    btn.disabled = true;
+    setStatus('Sending...', false);
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: ACCESS_KEY,
+        subject: form.walkthrough.checked ? 'New Lumeta walkthrough request' : 'New Lumeta waitlist signup',
+        from_name: 'Lumeta Waitlist',
+        name: name,
+        email: email,
+        company: company || '(not given)',
+        category: category || '(not given)',
+        walkthrough: form.walkthrough.checked ? 'YES - please contact to arrange' : 'No',
+        consent: 'Agreed to be emailed about early access',
+        botcheck: form.botcheck.checked
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (result) {
+      if (result && result.success) {
+        form.style.display = 'none';
+        if (form.walkthrough.checked) {
+          doneEl.querySelector('p').textContent = "Thanks. We'll email you to arrange your walkthrough, and again when early access opens. In the meantime you can run a real check on the live demo.";
+        }
+        doneEl.style.display = 'block';
+      } else {
+        setStatus('Something went wrong sending that. Please try again in a moment.', true);
+        btn.disabled = false;
+      }
+    })
+    .catch(function () {
+      setStatus('Could not reach the signup service. Check your connection and try again.', true);
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
