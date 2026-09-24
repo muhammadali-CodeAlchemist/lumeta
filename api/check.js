@@ -15,6 +15,10 @@ const MAX_PER_DAY = 40;     // checks per visitor per day
 const MAX_BRAND_LENGTH = 80;
 const MAX_CATEGORY_LENGTH = 120;
 
+// Gemini models. If the main one is overloaded (503), we retry, then fall back.
+const PRIMARY_MODEL = "gemini-3.6-flash";
+const FALLBACK_MODEL = "gemini-3.1-flash-lite";
+
 // ---------- Simple in-memory rate limiter ----------
 // Note: serverless instances don't share memory and reset when they go idle,
 // so this is a good first line of defence, not a hard guarantee.
@@ -53,6 +57,56 @@ function getClientIp(req) {
   const forwarded = req.headers["x-forwarded-for"];
   if (forwarded) return String(forwarded).split(",")[0].trim();
   return req.socket?.remoteAddress || "unknown";
+}
+
+// ---------- Gemini call with retry + fallback ----------
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function callGemini(model, apiKey, prompt) {
+  return fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.4 },
+      }),
+    }
+  );
+}
+
+// 503 = Google's model is overloaded, 429 = quota. Both are worth retrying / falling back.
+async function callGeminiWithRetry(apiKey, prompt) {
+  const plan = [
+    { model: PRIMARY_MODEL, waitBefore: 0 },
+    { model: PRIMARY_MODEL, waitBefore: 1200 },
+    { model: FALLBACK_MODEL, waitBefore: 600 },
+  ];
+
+  let lastResponse = null;
+  for (const step of plan) {
+    if (step.waitBefore) await sleep(step.waitBefore);
+    try {
+      const response = await callGemini(step.model, apiKey, prompt);
+      if (response.ok) return response;
+
+      lastResponse = response;
+      const errText = await response.clone().text();
+      console.error(`Gemini API error (${step.model}):`, response.status, errText);
+
+      // Only retry on temporary problems. Anything else (bad key, bad request) won't get better.
+      if (response.status !== 503 && response.status !== 429 && response.status !== 500 && response.status !== 404) {
+        return response;
+      }
+    } catch (networkErr) {
+      console.error(`Gemini network error (${step.model}):`, networkErr);
+    }
+  }
+  return lastResponse;
 }
 
 export default async function handler(req, res) {
@@ -130,25 +184,15 @@ Respond with ONLY valid JSON, no markdown formatting, no other text, in this exa
 If "${cleanBrand}" is a small or less-known business, that is expected and normal — most brands are not mentioned by default. In that case set mentioned to "No", and make the actions specific to improving AI visibility for a brand like this one, not generic advice.`;
 
   try {
-    const geminiResponse = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4 },
-        }),
-      }
-    );
+    const geminiResponse = await callGeminiWithRetry(apiKey, prompt);
 
-    if (!geminiResponse.ok) {
-      const errText = await geminiResponse.text();
-      console.error("Gemini API error:", geminiResponse.status, errText);
-      res.status(502).json({ error: "The AI service had a problem. Please try again shortly." });
+    if (!geminiResponse || !geminiResponse.ok) {
+      const busy = geminiResponse && (geminiResponse.status === 503 || geminiResponse.status === 429);
+      res.status(502).json({
+        error: busy
+          ? "The AI service is very busy right now. Please try again in a minute."
+          : "The AI service had a problem. Please try again shortly.",
+      });
       return;
     }
 
