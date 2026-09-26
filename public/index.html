@@ -149,6 +149,13 @@
   }
   .channel h3 { font-size: 1.15rem; font-weight: 500; }
   .channel p { color: var(--ink-soft); font-size: 0.94rem; margin-top: 10px; }
+  .channel .badge {
+    display: inline-block; font-size: 0.72rem; border-radius: 20px; padding: 2px 10px; margin-bottom: 12px;
+    border: 1px solid var(--paper-line); color: var(--ink-soft);
+  }
+  .channel .badge.live { color: var(--green); border-color: var(--green); }
+  .channel .more { display: inline-block; margin-top: 14px; font-size: 0.88rem; font-weight: 600; color: var(--rust); text-decoration: none; }
+  .channel .more:hover { text-decoration: underline; }
 
   .work-list { border-top: 1px solid var(--paper-line); }
   .work-item {
@@ -242,7 +249,7 @@
 <section class="hero">
   <div class="wrap hero-animate">
     <div class="eyebrow-line">
-      <span>Tracked across ChatGPT, Claude, Gemini & 5 more</span>
+      <span>Live on Gemini. ChatGPT, Claude, Perplexity and more coming soon.</span>
       <span class="rule"></span>
     </div>
     <h1>Know what AI says about your brand before your customers hear it.</h1>
@@ -304,24 +311,50 @@
   <div class="wrap">
     <div class="section-head">
       <h2>Built for the future of search</h2>
-      <span class="idx">Every major engine, one dashboard</span>
+      <span class="idx">Gemini is live. The rest are next.</span>
     </div>
     <div class="channels">
       <div class="channel">
+        <span class="badge live">Live now</span>
+        <h3>Gemini</h3>
+        <p>Run a real check in the live demo below.</p>
+        <a class="more" href="#demo">Try it</a>
+      </div>
+      <div class="channel">
+        <span class="badge">Coming soon</span>
         <h3>ChatGPT</h3>
-        <p>The largest share of AI-driven product and brand questions today.</p>
+        <p>Widely used for product and brand questions.</p>
+        <a class="more" href="/waitlist.html?engine=ChatGPT">Get notified</a>
       </div>
       <div class="channel">
-        <h3>Claude & Gemini</h3>
-        <p>Growing fast for research-style and comparison queries.</p>
+        <span class="badge">Coming soon</span>
+        <h3>Claude</h3>
+        <p>Popular for research-style and comparison questions.</p>
+        <a class="more" href="/waitlist.html?engine=Claude">Get notified</a>
       </div>
       <div class="channel">
-        <h3>Perplexity & Copilot</h3>
-        <p>Citation-heavy answers where source attribution is everything.</p>
+        <span class="badge">Coming soon</span>
+        <h3>Perplexity</h3>
+        <p>Answers with cited sources, so attribution matters.</p>
+        <a class="more" href="/waitlist.html?engine=Perplexity">Get notified</a>
       </div>
       <div class="channel">
-        <h3>Grok & DeepSeek</h3>
-        <p>Newer engines, already shaping category perception early.</p>
+        <span class="badge">Coming soon</span>
+        <h3>Copilot</h3>
+        <p>Answers built into Microsoft products.</p>
+        <a class="more" href="/waitlist.html?engine=Copilot">Get notified</a>
+      </div>
+      <div class="channel">
+        <span class="badge">Coming soon</span>
+        <h3>Grok</h3>
+        <p>A newer engine, also worth watching.</p>
+        <a class="more" href="/waitlist.html?engine=Grok">Get notified</a>
+      </div>
+      <div class="channel">
+        <span class="badge">Coming soon</span>
+        <h3>DeepSeek</h3>
+        <p>A newer engine, also worth watching.</p>
+        <a class="more" href="/waitlist.html?engine=DeepSeek">Get notified</a>
       </div>
     </div>
   </div>

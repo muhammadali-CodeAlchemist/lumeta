@@ -110,6 +110,13 @@
   .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.86rem; color: var(--ink-soft); margin: 4px 0 22px; }
   .consent input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
   .consent label { margin: 0; }
+  .engines { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; margin: 0; cursor: pointer;
+    border: 1px solid var(--paper-line); border-radius: 20px; padding: 6px 12px;
+    font-size: 0.86rem; color: var(--ink); background: var(--paper);
+  }
+  .chip input { width: 16px; height: 16px; margin: 0; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   .status { margin-top: 16px; font-size: 0.92rem; min-height: 1.4em; }
   .status.err { color: var(--error); }
@@ -171,6 +178,18 @@
           <input id="category" name="category" type="text" maxlength="120" placeholder="e.g. digital marketing agency for law firms">
         </div>
 
+        <div class="field">
+          <label>Which AI engines matter most to you? <span class="opt">(optional)</span></label>
+          <div class="engines">
+            <label class="chip"><input type="checkbox" name="engine" value="ChatGPT"> ChatGPT</label>
+            <label class="chip"><input type="checkbox" name="engine" value="Claude"> Claude</label>
+            <label class="chip"><input type="checkbox" name="engine" value="Perplexity"> Perplexity</label>
+            <label class="chip"><input type="checkbox" name="engine" value="Copilot"> Copilot</label>
+            <label class="chip"><input type="checkbox" name="engine" value="Grok"> Grok</label>
+            <label class="chip"><input type="checkbox" name="engine" value="DeepSeek"> DeepSeek</label>
+          </div>
+        </div>
+
         <!-- spam trap: real people never see or tick this -->
         <div class="hp" aria-hidden="true">
           <label for="botcheck">Leave this empty</label>
@@ -213,6 +232,17 @@
   var doneEl = document.getElementById('done');
   var wantsWalkthroughFromLink = /[?&]walkthrough=1/.test(window.location.search);
 
+  var engineBoxes = form.querySelectorAll('input[name="engine"]');
+  var wanted = (new URLSearchParams(window.location.search).get('engine') || '').toLowerCase();
+  if (wanted) {
+    engineBoxes.forEach(function (box) {
+      if (box.value.toLowerCase() === wanted) {
+        box.checked = true;
+        document.getElementById('page-title').textContent = 'Get notified when Lumeta adds ' + box.value + '.';
+      }
+    });
+  }
+
   if (wantsWalkthroughFromLink) {
     form.walkthrough.checked = true;
     document.getElementById('page-title').textContent = 'Book a walkthrough of Lumeta.';
@@ -254,6 +284,7 @@
         email: email,
         company: company || '(not given)',
         category: category || '(not given)',
+        engines_wanted: Array.prototype.filter.call(engineBoxes, function (b) { return b.checked; }).map(function (b) { return b.value; }).join(', ') || '(none chosen)',
         walkthrough: form.walkthrough.checked ? 'YES - please contact to arrange' : 'No',
         consent: 'Agreed to be emailed about early access',
         botcheck: form.botcheck.checked
